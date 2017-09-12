@@ -1,1 +1,0 @@
-"0","X = data.frame(V1 = c(rnorm(500, 2, .15), rnorm(500, 1, .15)), V2 = rnorm(1000, 5, 1))"

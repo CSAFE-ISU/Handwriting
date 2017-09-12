@@ -1,1 +1,0 @@
-"0","plot(X, col = kmeans(X.ihs, 2)$cluster)"

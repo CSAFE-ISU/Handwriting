@@ -1,3 +1,0 @@
-"0","```r
-plot(X, col = kmeans(X.bc, 2)$cluster)
-```"

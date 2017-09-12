@@ -1,1 +1,0 @@
-"0","plot(X, col = as.factor(kmeans(X, 2)$cluster))"
