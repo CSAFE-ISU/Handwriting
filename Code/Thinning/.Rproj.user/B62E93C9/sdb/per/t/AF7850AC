@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "## Junction Detection.\n## Provide skeletonized image from ThinText.\n\n# A black pixel becomes a node if its removal creates exactly one or at least \n# three 4-connected black components in its 1-neighborhood.\n\n# Also from Zhang thinning paper (allegedly)\n\n#' Internal function for counting 4-connected components around a pixel.\ncountChanges = function(coords, img)\n{\n  rr = coords[1]\n  cc = coords[2]\n  if(rr>1 & cc>1 & rr<dim(img)[1] & cc<dim(img)[2])\n  {\n    neighbs = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,3,6,9,8,7,4,1,2)]\n    return(sum(neighbs == 1 & c(neighbs[-1], neighbs[1]) == 0))\n  }\n  else\n  {\n    stop(\"Please use `crop` to crop your image. Not padded around outside.\")\n  }\n}\n\n#' getNodes\n#'\n#' Detect intersection points of an image thinned with thinImage.\n#' @param img Thinned binary image.\n#' @keywords vertex detection, Zhang, Suen\n#' @return Returns image matrix. 1 is blank, 0 is a node.\n#' @examples\n#' data(london)\n#' london = crop(london)\n#' london_thin = thinImage(london, verbose = TRUE)\n#' london_nodes = getNodes(london_thin)\n#' \n#' data(cells)\n#' cells = crop(cells)\n#' cells_thin = thinImage(cells, verbose = TRUE)\n#' cells_nodes = getNodes(cells_thin)\n#' \n#' data(message)\n#' message = crop(message)\n#' message_thin = thinImage(message, verbose = TRUE)\n#' message_nodes = getNodes(message_thin)\n#' \n#' @export\n\ngetNodes = function(img)\n{\n  indices = which(img == 0)\n  img.m = cbind(((indices-1) %% dim(img)[1]) + 1, ((indices - 1) %/% dim(img)[1]) + 1)\n  changeCount = matrix(apply(X = img.m, MARGIN = 1, FUN = countChanges, img = img), byrow = F, nrow = 1)\n  nodes = matrix(1, dim(img)[1], dim(img)[2])\n  nodes[indices] = ifelse(changeCount == 1 | changeCount >= 3, 0, 1)\n  return(nodes)\n}\n\n#' plotNodes\n#' \n#' This function returns a plot with the full image plotted in light gray and the skeleton printed in black, with red triangles over the vertices.\n#' @param img Full image matrix, unthinned.\n#' @param thinned Thinned image matrix\n#' @param nodeList Nodelist returned from getNodes.\n#' @param nodeSize Size of triangles printed. 3 by default. Move down to 2 or 1 for small text images.\n#' @return Plot of full and thinned image with vertices overlaid.\n#' @examples\n#' # See getNodes() examples first.\n#' plotNodes(london, london_thin, london_nodes)\n#' plotNodes(cells, cells_thin, cells_nodes)\n#' plotNodes(message, message_thin, message_nodes)\n#' \n#' @export\n\nplotNodes = function(img, thinned, nodeList, nodeSize = 3)\n{\n  l.m = melt(img)\n  t.m = melt(thinned)\n  n.m = melt(nodeList)\n  l.m$value[t.m$value == 0] = 2\n  l.m$value[n.m$value == 0] = 3\n  n.m2 = n.m[n.m$value == 0,]\n  p = ggplot(l.m, aes(Var2, rev(Var1))) + geom_raster(aes(fill = as.factor(value != 1), alpha = ifelse(value==0,.3,1))) + scale_alpha_continuous(guide = FALSE) + scale_fill_manual(values = c(\"white\", \"black\"), guide = FALSE) + theme_void() + geom_point(data= n.m2, aes(x = Var2, y = dim(thinned)[1] - Var1 + 1), shape = I(17), size = I(nodeSize), color = I(\"red\"))\n  return(p)\n}\n",
+    "created" : 1505148454885.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2867111029",
+    "id" : "AF7850AC",
+    "lastKnownWriteTime" : 1505149283,
+    "last_content_update" : 1505149283873,
+    "path" : "~/Documents/Projects/CSAFE/handwriter/R/JunctionDetection.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

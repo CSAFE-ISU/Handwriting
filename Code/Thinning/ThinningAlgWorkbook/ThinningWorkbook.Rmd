@@ -1,0 +1,332 @@
+---
+title: "Zhang-Suen Thinning Algorithm"
+output: html_notebook
+---
+
+
+The goal of thinning algorithms is to take a binary image and draw a 1 pixel wide skeleton of that image while retaining the shape and structure of the full image.
+
+The Zhang-Suen Thinning algorithm is probably the most used thinning algorithm. Devised in 1984, the algorithm is what is called a 2-pass algorithm, meaning that for each iteration it performs two sets of checks to remove pixels from the image. The checks are devised so that the first set removes from the south east (bottom right) corner of the image, and the second set removes from the north west (top left) corner. Before we define the checks, we'll make a couple of definitions.
+
+> A(i,j) = the number of transitions from white to black, in the sequence of the eight neighbors around pixel (i,j), where the sequence starts and ends at the same neighbor (making a complete circle)
+
+> B(i,j) = the number of black pixels among the eight neighbors around pixel (i,j).
+
+Mark a pixel for removal if it satisfies all of the following conditions:
+
+#### Pass 1
+0. The pixel is black and has eight neighbours
+1. 2 <= B(i,j) <= 6
+2. A(i,j) = 1
+3. At least one of the north, east, and south neighbors is *white*
+4. At least one of east, south, and west neighbors is *white*
+
+#### Pass 2
+
+0. The pixel is black and has eight neighbours
+1. 2 <= B(i,j) <= 6
+2. A(i,j) = 1
+3. At least one of the north, east, and west neighbors is *white*
+4. At least one of north, south, and west neighbors is *white*
+
+***
+Notice that only steps 3 and 4 change between passes. If a pixel is chosen for removal by either Pass 1 or Pass 2, then it is removed. These passes are both repeated until there is not a pixel chosen for removal by either.
+
+### Implementation of the Algorithm
+
+The algorithm is designed for parallelization, which I haven't done, but I have made modifications to make the run time as fast as I could without parallelization.
+
+#### Naive Implementation
+
+A naive implementation of the algorithm is to iterate over every pixel for each pass of the algorithm. In the simplest terms, this is how the algorithm is designed, but there is no need to ever do this.
+
+#### One Step Up
+
+Noticing that Step (0) in both passes allows only black pixels to be looked at we can, right off the bat, narrow our set of pixels to check down to the pixels that are black in the original image. This presents a considerable speed up, as we aren't doing calculations on white space in the images.
+
+More than just looking at pixels that are black in the original image, we can look at only pixels that are black in the current state of the thinned image. This means that as the image gets thinned, the iterations get faster, which is great! This version of the algorithm is what is currently implemented by almost everyone that claims to have a `fast' iteration of the algorithm.
+
+#### My Implementation
+
+My implementation is uniformly better than the previously described algorithm. It provides identical results, and performs the same exact checks, but does a better job at choosing where to look. The first iteration is the same. We check every black pixel in the image, which has to be done. After the first iteration, though, we do better in every subsequent iteration. After the first iteration, a pixel only needs to be looked at if one of its neighbors was previously removed. If a neighbor wasn't removed, and the pixel is still black, then nothing has changed around it, so it will stay black. This results in not only us having to look at all black pixels of the thin image, but us having to look at only the parts of the image that are still being thinned. Once a region of the image is thinned adequately, we no longer even look at that section. This drastically reduces the computations necessary at the tail end of the algorithm when small regions are still being thinned, but most of the image is done.
+
+###Simulation Checks
+
+In actuality, the first cases of the algorithm are special cases of the code that I wrote, meaning that I will only have to change 1 line to recreate them. This is great for the timing of the algorithm, as we are comparing apples to nearly identical apples. I am choosing to output a lot of information here, so that we can look at what is being done by the algorithms.
+
+We will be thinning on a handwritten cursive word, namely, London. The london image is a 148 x 481 pixel iamge. The time to thin is reasonable, which is good because the Naive implementation is slow. The image is shown below.
+
+```{r Show Data, echo=FALSE, message=FALSE, warning=FALSE}
+devtools::install_github("CSAFE-ISU/handwriter")
+library(handwriter)
+data(london)
+plotImage(london)
+```
+```{r, redefineInternals, echo = FALSE}
+neighborChanges = function(coords, img)
+{
+  rr = coords[1]
+  cc = coords[2]
+  if(rr>1 & cc>1 & rr<dim(img)[1] & cc<dim(img)[2])
+  {
+    neighbs = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,3,6,9,8,7,4,1,2)]
+    return(sum(neighbs == 1 & c(neighbs[-1], neighbs[1]) == 0))
+  }
+  else
+    return(0)
+}
+
+#' numNeighbors
+#'
+#' Internal function for thinImage. Counts neighbors with value of 0.
+#' @param coords Point location.
+#' @param img Image object.
+#' @return Returns number of 0 neighbors.
+
+numNeighbors = function(coords, img)
+{
+  rr = coords[1]
+  cc = coords[2]
+  if(rr>1 & cc>1 & rr<dim(img)[1] & cc<dim(img)[2])
+  {
+    neighbs = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,3,6,9,8,7,4,1)]
+    return(sum(neighbs == 0))
+  }
+  else
+    return(0)
+}
+
+#' neighbs246468
+#'
+#' Internal function for thinImage. Returns 1 if one of the points to the top, bottom and left AND one of right, bottom, left are non-zero. 0 otherwise.
+#' @param coords Point location.
+#' @param img Image object.
+#' @return Returns 1 or 0 for condition mentioned above.
+#' 
+neighbs246468 = function(coords, img)
+{
+  rr = coords[1]
+  cc = coords[2]
+  if(rr>1 & cc>1 & rr<dim(img)[1] & cc<dim(img)[2])
+  {
+    neighbs246 = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,6,8)]
+    neighbs468 = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(4,6,8)]
+    return(as.numeric(any(neighbs246 == 1) & any(neighbs468 == 1)))
+  }
+  else
+    return(0)
+}
+
+#' neighbs246468
+#'
+#' Internal function for thinImage. Returns 1 if at least one of the points to the top, right and bottom AND at least one of top, right, left are non-zero. 0 otherwise.
+#' @param coords Point location.
+#' @param img Image object.
+#' @return Returns 1 or 0 for condition mentioned above.
+
+neighbs248268 = function(coords, img)
+{
+  rr = coords[1]
+  cc = coords[2]
+  if(rr>1 & cc>1 & rr<dim(img)[1] & cc<dim(img)[2])
+  {
+    neighbs248 = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,4,6)]
+    neighbs268 = c(t(img[(rr-1):(rr+1),][,(cc-1):(cc+1)]))[c(2,4,8)]
+    return(as.numeric(any(neighbs248 == 1) & any(neighbs268 == 1)))
+  }
+  else
+    return(0)
+}
+
+#' stepA
+#'
+#' Internal function for thinImage. First iteration of checks for thinning algorithm
+#' @param img Image object.
+#' @param coords Locations of points to check.
+#' @return TRUE or FALSE for each point in coords, based on if they pass the checks.
+
+stepA = function(img, coords)
+{
+  imgA = matrix(apply(X = coords, MARGIN = 1, FUN = neighborChanges, img = img), byrow = F, nrow = 1)
+  imgB = matrix(apply(X = coords, MARGIN = 1, FUN = numNeighbors, img = img), byrow = F, nrow = 1)
+  img246468 = matrix(apply(X = coords, MARGIN = 1, FUN =  neighbs246468, img = img), byrow = F, nrow = 1)
+  imgFlag = as.numeric(imgB >= 2 & imgB <= 6 & imgA == 1 & img246468 == 1)
+  return(imgFlag)
+}
+
+#' stepA
+#'
+#' Internal function for thinImage. Second iteration of checks for thinning algorithm
+#' @param img Image object.
+#' @param coords Locations of points to check.
+#' @return TRUE or FALSE for each point in coords, based on if they pass the checks.
+
+stepB = function(img, coords)
+{
+  imgA = matrix(apply(X = coords, MARGIN = 1, FUN = neighborChanges, img = img), byrow = F, nrow = 1)
+  imgB = matrix(apply(X = coords, MARGIN = 1, FUN = numNeighbors, img = img), byrow = F, nrow = 1)
+  img248268 = matrix(apply(X = coords, MARGIN = 1, FUN =  neighbs248268, img = img), byrow = F, nrow = 1)
+  imgFlag = as.numeric(imgB >= 2 & imgB <= 6 & imgA == 1 & img248268 == 1)
+  return(imgFlag)
+}
+```
+
+
+#### Naive Implementation
+```{r NaiveCode, include=FALSE}
+naiveThinning = function(img, verbose = FALSE) 
+{
+    flag = TRUE
+    if (verbose) 
+    {
+      iterCount = 1
+      total.time.start <- Sys.time()
+    }
+    thinned = img
+   # change = which(img == 0)
+    while (flag == TRUE) {
+        if (verbose != FALSE) 
+            start.time <- Sys.time()
+        #index = change[thinned[change] == 0]
+        index = 1:prod(dim(img))
+        img.m = cbind(((index - 1)%%dim(img)[1]) + 1, ((index - 1)%/%dim(img)[1]) + 1)
+        flagA = stepA(thinned, img.m) & thinned[index] == 0
+        thinned[index] = ifelse(c(thinned[index] == 0) & flagA == 0, 0, 1)
+        flagB = stepB(thinned, img.m) & thinned[index] == 0
+        thinned[index] = ifelse(c(thinned[index] == 0) & flagB == 0, 0, 1)
+        if (sum(flagA + flagB, na.rm = T) == 0) {
+            flag = FALSE
+        }
+        else {
+            #image(matrix(1-as.numeric(flagA|flagB), ncol = dim(img)[2]))
+            #change = index[(flagA | flagB)]
+            #change = unique(rep(change, each = 9) + rep(c(0, 1, -1, dim(img)[1] - 1, dim(img)[1] + 1, -dim(img)[1] + 1, -dim(img)[1] - 1, dim(img)[1], -dim(img)[1]), length(change)))
+            #change = change[change >= 1 & change <= prod(dim(img))]
+        }
+        if (verbose == TRUE) {
+            cat("\nIteration", iterCount, "done:", sum(flagA | flagB), "changes.")
+           # cat("\nLeft to check:", ifelse(sum(flagA | flagB) != 0, length(change), 0))
+            iterCount = iterCount + 1
+        }
+        flagA[] = 0
+        flagB[] = 0
+        if (verbose == TRUE) {
+            end.time <- Sys.time()
+            cat("\nIteration Time:", end.time - start.time, "\n")
+        }
+    }
+    if(verbose)
+    {
+      total.time.end <- Sys.time()
+      cat("\n------------------------\nTotal Run Time:", difftime(total.time.end, total.time.start, units = "secs"), "\n------------------------\n")
+    }
+    return(thinned)
+}
+```
+
+```{r NaiveRun, echo=FALSE}
+london_naive = naiveThinning(london, verbose = TRUE)
+```
+
+Notice in the output above that every iteration takes about 11 or so seconds. This is the amount of time that it takes to check every pixel in the image. A better algorithm will get faster as the image gets cut down.
+```{r plotNaive, echo = FALSE}
+plotImageThinned(london, london_naive)
+```
+
+#### Better but not great implementation
+```{r OneStepUp, echo=FALSE}
+betterThinning = function(img, verbose = FALSE) 
+{
+    flag = TRUE
+    if (verbose) 
+    {
+        iterCount = 1
+        total.time.start = Sys.time()
+    }
+    thinned = img
+   # change = which(img == 0)
+    while (flag == TRUE) {
+        if (verbose != FALSE) 
+            start.time <- Sys.time()
+        #index = change[thinned[change] == 0]
+        index = which(thinned == 0)
+        img.m = cbind(((index - 1)%%dim(img)[1]) + 1, ((index - 1)%/%dim(img)[1]) + 1)
+        flagA = stepA(thinned, img.m)
+        thinned[index] = ifelse(c(thinned[index] == 0) & flagA == 0, 0, 1)
+        flagB = stepB(thinned, img.m)
+        thinned[index] = ifelse(c(thinned[index] == 0) & flagB == 0, 0, 1)
+        if (sum(flagA + flagB, na.rm = T) == 0) {
+            flag = FALSE
+        }
+        else {
+            #image(matrix(1-as.numeric(flagA|flagB), ncol = dim(img)[2]))
+            #change = index[(flagA | flagB)]
+            #change = unique(rep(change, each = 9) + rep(c(0, 1, -1, dim(img)[1] - 1, dim(img)[1] + 1, -dim(img)[1] + 1, -dim(img)[1] - 1, dim(img)[1], -dim(img)[1]), length(change)))
+            #change = change[change >= 1 & change <= prod(dim(img))]
+        }
+        if (verbose == TRUE) {
+            cat("\nIteration", iterCount, "done:", sum(flagA | flagB), "changes.")
+           # cat("\nLeft to check:", ifelse(sum(flagA | flagB) != 0, length(change), 0))
+            iterCount = iterCount + 1
+        }
+        flagA[] = 0
+        flagB[] = 0
+        if (verbose == TRUE) {
+            end.time <- Sys.time()
+            cat("\nIteration Time:", end.time - start.time, "\n")
+        }
+    }
+    if(verbose)
+    {
+      total.time.end = Sys.time()
+      cat("\n------------------------\nTotal Run Time:", difftime(total.time.end, total.time.start, units = "secs"), "\n------------------------\n")
+    }
+    return(thinned)
+}
+```
+
+```{r BetterEx, echo=FALSE}
+london_better = betterThinning(london, verbose = TRUE)
+```
+
+
+#### My Implementation
+
+It's important to note that each of these algorithms is performing the exact same procedure, down to the pixel. There is no randomness involved, so we can verify by looking at the number of changes made that each of the speeds is returning the exact same thing.
+```{r FastThinning, echo = FALSE}
+london_fast = thinImage(london, verbose = TRUE)
+```
+
+### Lets look at a bigger image (but just for the last 2 implementations)
+
+We'll thin the following paragraph. It is a 1262 by 1162 image.
+
+```{r Message, echo=FALSE}
+data(message)
+message = crop(message)
+plotImage(message)
+```
+
+#### Better than naive, but not good implementation
+
+The thing to notice about this algorithm is at the end, when there are only double digit changes to be made, there is a lower bound to how fast the algorithm can run. About 10 seconds for this image. For my implementation, these stages will run more quickly.
+
+```{r MessageBetter, echo = FALSE}
+message_better = betterThinning(message, verbose = TRUE)
+```
+
+#### My Implementation
+
+The first iteration is about the same for the two methods, we have to look at all of the dark pixels. Subsequent iterations will be smaller, especially the iterations when a small number of changes is made. We no longer have to look at the parts of the message that have already been thinned, just the parts that are actively being thinned. This results in a substantial speed boost here (about 2 times), and will get even faster as the image size increases.
+
+```{r MessageFast, echo=FALSE}
+message_fast = thinImage(message, verbose = TRUE)
+```
+
+So, there is already a substantial speed increase. I also think that a large part of the run time (the first iteration) could be eliminated if I picked a more creative starting set to look at. Something like, look at every point that has at least 2 and not more than 6 neighbors. This would only check that condition for all black points, but not remove any, and then would narrow down the set for when we need to check every condition. We could reduce the long iteration time a couple times over by doing this.
+
+
+### Finding Vertices:
+
+
+

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "# Simple bad Kmeans implementation for testing.\n\ndata(\"iris\")\niris = as.matrix(iris[,1:4])\n\nbadKM = function(X, K, centers = NULL, ninit = 1, lambdaSeq = NULL)\n{\n  bestWSS = Inf\n  if(is.null(lambdaSeq))\n  {\n    lambdaSeq = seq(from = .01, to = 3, by = .25)\n  }\n  lambda = array(0, dim = rep(length(lambdaSeq), dim(X)[2]))\n  for(z in 1:ninit)\n  {\n    if(ninit > 1)\n    {\n      centers = NULL\n      oldCenter = NULL\n      if(all(dim(centers) != c(K, dim(X)[2])) & !is.null(centers))\n      {\n        cat(\"Bad centers dimensions provided. Randomizing.\")\n        centers = NULL\n      }\n    }\n    if(is.null(centers))\n    {\n      centers = as.matrix(X[sample(1:dim(X)[1], K),])\n    }\n    iter = 1\n    \n    while(TRUE)\n    {\n      oldCenters = centers\n      dists = apply(centers, 1, FUN = function(dat, center){return(t(sqrt(colSums((t(dat) - center)^2))))}, dat = X)\n      closest = apply(dists, 1, which.min)\n      for(i in 1:K)\n      {\n        closeCount = sum((closest == i))\n        if(closeCount == 0){\n          centers[i,] = X[sample(1:dim(X)[1], 1),]\n          cat(\"Had to resample bc none in one group.\")}\n        else if(closeCount == 1){\n          centers[i,] = X[which(closest == i)]\n          cat(\"Had 1 in group.\")}\n        else\n        {\n          centers[i,] = colMeans(X[which(closest == i),])}\n      }\n      if(all(centers == oldCenters))\n      {\n        break\n      }\n      iter = iter + 1\n    }\n    WSS = sum((X - centers[closest,])^2)\n    if(WSS < bestWSS)\n    {\n      bestWSS = WSS\n      bestClasses = closest\n      bestMeans = centers\n      bestIter = iter\n      cat(\"Using\", z)\n    }\n    \n  }\n  \n  return(list(WSS = bestWSS, classID = bestClasses, means = bestMeans, iter = bestIter))\n}\n",
+    "created" : 1503971727640.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "545939677",
+    "id" : "3634121A",
+    "lastKnownWriteTime" : 1504131702,
+    "last_content_update" : 1504131702341,
+    "path" : "~/Documents/Dissertation/kmeansIHS/SimpleKmeansTest.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

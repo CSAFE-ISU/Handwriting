@@ -1,0 +1,136 @@
+Description of exported measurements data. 
+
+The exported data is organized into one CSV file for each isomorphism/shapecode pair. There is a separate line in each file 
+for each instance of a grapheme of that class. Each line contains the following columns:
+
+IdentityKey - Unique Id of the writer.
+IdentityName - Name of the writer.
+Isomorphism - Isomorphism code for the grapheme.
+ShapeCode - Shapecode for the graphmeme.
+Measurement Data - One or more columns for each measurement type for this grapheme type. Not all measurement types are created for each
+grapheme type. The names of the columns are encoded as follows:
+
+_<FeatureNumber>_<SubfeatureNumber>_<Count> or _<FeatureNumber>_<SubfeatureNumber>_Offset_<Count> The text "Offset" indicates that the
+value is an X-Y offset rather than a measurement in pixels or angular degrees. The definitions of the Feature Numbers and Subfeature Numbers
+are documented below. The Count value is an incremental counter for the number of measurements of that measurement type. For example, the
+columns: 	_2001_2_1,_2001_2_2,_2001_2_3,_2001_2_4,_2001_2_5,_2001_2_6 represent 6 measurements of absolute distance from vertex to vertex 
+of a 4 vertex graph (distances from 1->2, 1->3, 1->4, 2->3. 2->4, 3->4). The number of columns for a specific measurement is based on the 
+feature and subfeature type and number of vertices and/or edges in the graph. 
+
+
+Grapheme-based Features
+ AbsoluteDistance = 2001
+ CentroidDistance = 2002
+ DistanceRatio = 2005
+ ExitDirection = 2006
+ ExpectedDistance = 2007
+ GraphDirection = 2008
+ HorizontalSegment = 2009
+ VerticalSegment = 2010
+ NegativeSegment = 2011
+ PositiveSegment = 2012
+ Skew = 2013
+ Triangulation = 2014
+ XAxisProjection = 2015
+ YAxisProjection = 2016
+ ThresholdHistogram = 2017
+ CentroidDirection = 2018
+ FeatureMorphing = 2019
+ EdgeAreaMoment = 2020
+ EdgeAreaMomentRatio = 2021
+ FeatureLoop = 2022
+ EdgeAspectRatio = 2023
+ ExpectedDistanceAligned = 2024
+ VectorDistance = 2025
+ VertexAxisProjection = 2026
+ EdgeLength = 2027
+ BendingEnergy = 2028
+ SoftVertices = 2029
+ Bezier = 2030
+ Slant = 2031
+ Shakiness = 2032
+ ChainCodeDirection = 2033
+ Roundness=2034
+ PolarCoordinateDistance=2035
+ GraphMoment = 2036
+ Procrustes = 2037
+ 
+Word Part-based Features
+ TransitionWidth = 3001
+ CharacterHeight = 3002
+ SnakesOnAPlane = 3003
+ BaseLine = 3004
+
+Page-based Features
+ MarginWidth = 4001
+ WordPartsDistance = 4002
+ Connectivity = 4003
+ TextBoxAspect = 4004
+ 
+Image-based Features
+ VertexColor = 5001
+ VertexArea = 5002
+ VertexPerimeter = 5003
+ CentroidPoint = 5004
+
+Subfeatures 
+ NotApplicable = 1, - No supported subanalysis types
+ VertexToVertex = 2, - Perform analysis among the vertices of the graph
+ VertexToEdgeCentroid = 4, - Perform analysis between vertices and edge centroids of the graph
+ VertexToEdgeContours = 8, - Perform analysis between vertices and edge contours of the graph
+ EdgeCentroidToEdgeCentroid = 16, - Perform analysis among the edge centroids of the graph
+ EdgeContoursToEdgeContours = 32, - Perform analysis among the edge contours of the graph
+ EdgeContoursToEdgeCentroid = 64, - Perform analysis betwee the edge contours and edge centroids of the graph
+ Combined = 128, - Combine subanalyses
+ CombinedNormalizedHeight = 256, - Combine analyses with the reference graph normalized to the test graph's height
+ VertexToVertexNormalizedHeight = 512, - Perform VertexToVertex analysis with the reference graph normalized to the test graph's height
+ VertexToVertexNormalizedWidth = 1024, - Perform VertexToVertex analysis with the reference graph normalized to the test graph's width
+ XAxis = 2048, -  Perform analysis with respect to X-Axis
+ YAxis = 4096, -  Perform analysis with respect to Y-Axis
+ VertexToGraphCentroid = 8192, - Perform analysis between vertices and the graph centroid of the graph
+ EdgeCentroidToGraphCentroid = 16384, - Perform analysis among the edge centroids to the graph centroid of the graph
+ EdgeContoursToGraphCentroid = 32768, - Perform analysis between the edge contours and the graph centroid of the graph
+ PointToPointArea = 65536, - Perform Point-to-Point Area Morphing analysis
+ PointToPointLinear = 131072, - Perform Point-to-Point Linear Morphing analysis
+ GraphCentroidToVerticesByRank = 262144, - Perform Vertex to graph centroid by ranking of metric(distance measure) used.
+ GraphCentroidToEdgeCentroidsByRank = 524288, - Perform edge centroids to graph centroid by ranking of metric(distance measure) used.
+ GraphCentroidToEdgeContoursByRank = 1048576, - Perform edge contours to graph centroid by ranking of metric(distance measure) used.
+ LoopMinorAxisLength = 2097152, - Perform analysis between the minor axis of loops.
+ LoopMajorAxisLength = 4194304, - Perform analysis between the major axis of loops.
+ LoopSkew = 8388608, - Perform analysis between the skew of loops.
+ StemSkew = 16777216, - Perform analysis between the skew of stems.
+ StemSkewCombined = 33554432, - Perform analysis between the skew of stems and the skew of loops.
+ HeightOfMiddleZone = 67108864, - Compares the heights of middle zones.
+ UpperZoneMiddleZoneRatio = 134217728, - Compares the ratios of upper to middle zones.
+ HeightOfCharacterMiddleZoneRatio = 268435456, - Compares the ratios of character heights to middle zones.
+ EdgeToGraphCentroidWrtXAxis = 536870912, - Perform edge points to graph centroid with respect to x-axis
+ EdgeToGraphCentroidWrtYAxis = 1073741824, - Perform edge points to graph centroid with respect to y-axis
+ EdgeToGraphCentroidWrtXAxisByRank = 2147483648, - Perform edge points to graph centroid by ranking with respect to x-axis
+ EdgeToGraphCentroidWrtYAxisByRank = 4294967296, - Perform edge points to graph centroid by ranking with respect to y-axis
+ AspectRatio = 8589934592, - Perform analysis between the aspect ratios of loops.
+ LowerZoneMiddleZoneRatio = 17179869184, - Compares the ratios of lower to middle zones.
+ AspectRatioOriented = 34359738368, - For oriented aspect ratios
+ NaturalDelaunay = 68719476736, - For Delaunay triangulation
+ ImposedDelaunay = 137438953472, - For imposed Delaunay triangulation
+ ClockwiseAngle = 274877906944, - Calculate the angle between two edge endpoints and their common vertex in the clockwise direction
+ DirectionAtVertex = 549755813888, - Perform direction analysis from vertices
+ DirectionAtCorners = 1099511627776, - Perform direction analysis from edge corners
+ CombinedComponentAnalyses = 2199023255552, - Combine all subanalyses among graph components
+ CombinedCentroidAnalyses = 4398046511104, - Combine all subanalsyses involving the centroid
+ CombinedSelectedAnalyses = 8796093022208, - Combine a selected group of subnalyses
+ XYOffsets = 17592186044416, - Calculate x- and y-offsets among points
+ DistanceFromOrigin = 35184372088832, - Calculate distance from origin
+ AngleWithXAxis = 70368744177664, - Calculate angle with the positive x-axis
+ Trigonometric = 140737488355328, - Calculate trigonometric functions
+ Direction = 281474976710656,  - Calculate directional angles
+ VarianceSlant = 562949953421312,  - Calculate variance in slant angles
+ LowCharacterHeight = 1125899906842624,  - Calculate heights of low characters
+ LongCharacterHeight = 2251799813685248,  - Calculate heights of long characters
+ BaseLineAngle = 4503599627370496, - Calculates angle of regreesion line through base curve path and x-axis 
+ BaseLineFluctuation = 9007199254740992, - Calculates sum of error squared between base curve path and regression line.
+ Symmetry = 18014398509481984, - Calculate loop symmetry
+ CompassPoints = 36028797018963968, - One-digit direction representing points on a compass
+ FirstVertexToVertex = 72057594037927936, - From first ordered vertex to every other
+ FirstVertexToVertexAndFirstTriangulationPoints = 144115188075855872 - From first ordered vertex to every other vertex and first triangulation point
+ 
+ 
