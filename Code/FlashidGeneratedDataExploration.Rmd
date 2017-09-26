@@ -5,6 +5,7 @@ date: "9/26/2017"
 output: pdf_document
 ---
 
+Read in a few files.
 ```{r}
 require(tidyverse)
 
@@ -12,3 +13,26 @@ X4_112.0_000 <- read_csv("../data/Demo_measurements/4;112/4;112.0_000.csv")
 
 X10_112.4.3.1.129.0.0_0.4.0.0.0.0.0_302330223 <- read_csv("../data/Demo_measurements/10;112/10;112.4.3.1.129.0.0-0.4.0.0.0.0.0_302330223.csv")
 ```
+
+Writing a function to read in all files from a *_measurements folder.
+```{r}
+
+file_paths <- paste0("../data/Demo_measurements/", list.files(path = "../data/Demo_measurements/"))
+
+file_names <- list.files(folder_names[1],
+                  pattern="*.csv", 
+                  full.names = T)
+
+temp <- unlist(apply(as.matrix(file_paths), 1, list.files, pattern="*.csv", full.names = T))
+```
+
+
+
+
+
+
+
+
+
+
+
