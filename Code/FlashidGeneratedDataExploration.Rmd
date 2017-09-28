@@ -16,14 +16,22 @@ X10_112.4.3.1.129.0.0_0.4.0.0.0.0.0_302330223 <- read_csv("../data/Demo_measurem
 
 Writing a function to read in all files from a *_measurements folder.
 ```{r}
+folder_paths <- paste0("../data/Demo_measurements/", 
+                       list.files(path = "../data/Demo_measurements/"))
 
-file_paths <- paste0("../data/Demo_measurements/", list.files(path = "../data/Demo_measurements/"))
+file_paths <- unlist(apply(as.matrix(folder_paths), 
+                           1, list.files, 
+                           pattern="*.csv", full.names = T))
 
-file_names <- list.files(folder_names[1],
-                  pattern="*.csv", 
-                  full.names = T)
+## finds last backslash (to chop off file path and keep only .csv file name)
+start_keep <- regexpr("\\.[^\\.*$", x)
 
-temp <- unlist(apply(as.matrix(file_paths), 1, list.files, pattern="*.csv", full.names = T))
+## finds last period (to chop off .csv)
+end_keep <- regexpr("\\.[^\\.]*$", x)
+
+
+x <- file_paths[1]
+grep(x, 2)
 ```
 
 
