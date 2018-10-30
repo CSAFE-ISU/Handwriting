@@ -98,6 +98,15 @@ processHandwriting = function(img, dims)
   loopList = getLoops(nodeList, skel_graph, skel_graph0, pathList, dim(img))
 
   allPaths = append(pathList, loopList)
+  #candidates for consideration
+  #distance between nodes? horizontal / vert / euc
+
+  #I believe oblong both eucledian as well as x and y distance from the two points could tell us something
+
+  #height and width
+  #width can be taken from distance between two breaks
+  #quantity of loops compared against:
+  #graphemes
 
   ####################### This is after path finding. Find breakpoints and check rules for removal.
   #Nominate and check candidate breakpoints
