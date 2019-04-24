@@ -1,0 +1,81 @@
+---
+title: "Survey_Generator"
+author: "Colin Crumrine"
+date: "March 1, 2019"
+output: 
+  pdf_document:
+    includes:
+      in_header: header.tex
+
+geometry: "top=1.2cm, left=2cm, right = 1.8cm, bottom = 0cm"
+header-includes:
+  \AtBeginDocument{\let\maketitle\relax}
+  \pagenumbering{gobble}
+  
+---
+
+
+
+```{r, echo = F, warning=FALSE, fig.height=2, fig.width=7, results='asis'}
+library(qrcode)
+library(gridExtra)
+library(ggplot2)
+library(tidyr)
+library(grid)
+library(knitr)
+########################## found this online, works well - fills image box.
+ggqrcode <- function(text, color="black", alpha=1) {
+  pkg <- "qrcode"
+  require(pkg, character.only = TRUE)
+  x <- qrcode_gen(text, plotQRcode=F, dataOutput=T)
+  x <- as.data.frame(x)
+  
+  y <- x
+  y$id <- rownames(y)
+  y <- gather(y, "key", "value", colnames(y)[-ncol(y)])
+  y$key = factor(y$key, levels=rev(colnames(x)))
+  y$id = factor(y$id, levels=rev(rownames(x)))
+  
+  ggplot(y, aes_(x=~id, y=~key)) + geom_tile(aes_(fill=~value), alpha=alpha) +
+    scale_fill_gradient(low="white", high=color) +
+    theme_void() + theme(legend.position='none')
+}
+```
+
+
+
+
+```{r, echo = F, warning=FALSE, fig.height=1, fig.width=8, fig.align= 'right',results='asis'}
+writerID <- rep(paste0("00", c(16:25)), each = 1)
+sitting <- rep("01", times = length(writerID))
+
+labelinfo <-cbind(writerID, sitting, "Survey1")
+
+strings <- c(); qrcode <- c()
+for(i in 1:length(writerID)){
+ strings[i] <- paste("Pilot", writerID[i], sitting, "Survey1", sep = "/")
+}
+
+
+
+for(i in 1:10){
+
+cat("\n\n\\pagebreak\n")
+  
+p1 <-grid::textGrob(paste0("WID:", writerID[i], "\n"), x = unit(0.35, "npc"), y = unit(0.3, "npc"), hjust=0, gp=gpar(fontsize = 13))
+
+#QR code
+p3 <- ggqrcode(strings[i])
+
+#blank element to fill space between text and QR
+blank <- grid.rect(gp=gpar(col = "white"))
+
+#plot everything
+grid.arrange(blank, p1,  arrangeGrob(p3 + coord_fixed()), ncol=3, widths = c(2,1,.5))
+
+#latex commands printed then executed
+cat("\n\n\\vspace{-3mm}\n") #negative vertical space to pull the line up
+cat("\n\n\\pagebreak\n")
+}
+```
+
