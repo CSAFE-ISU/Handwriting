@@ -1,7 +1,6 @@
 ---
 title: "Survey_Generator"
-author: "Colin Crumrine"
-date: "March 1, 2019"
+date: "May, 2019"
 output: 
   pdf_document:
     includes:
