@@ -5,7 +5,7 @@ date: "March 1, 2019"
 output: 
   pdf_document:
     includes:
-      in_header: header.tex
+      in_header: Survey_header.tex
 
 geometry: "top=1.2cm, left=2cm, right = 1.8cm, bottom = 0cm"
 header-includes:
@@ -46,19 +46,17 @@ ggqrcode <- function(text, color="black", alpha=1) {
 
 
 ```{r, echo = F, warning=FALSE, fig.height=1, fig.width=8, fig.align= 'right',results='asis'}
-writerID <- rep(paste0("00", c(16:25)), each = 1)
-sitting <- rep("01", times = length(writerID))
-
-labelinfo <-cbind(writerID, sitting, "Survey1")
+#writerID <- rep(paste0("00", c(16:25)), each = 1)
+writerID = rep("0000", each = 1)
+doclabel = "survey1"
 
 strings <- c(); qrcode <- c()
 for(i in 1:length(writerID)){
- strings[i] <- paste("Pilot", writerID[i], sitting, "Survey1", sep = "/")
+ strings[i] <- paste(paste0("w", writerID[i]), doclabel, sep = "/")
 }
 
 
-
-for(i in 1:10){
+for(i in 1:length(writerID)){
 
 cat("\n\n\\pagebreak\n")
   
