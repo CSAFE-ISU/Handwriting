@@ -13,7 +13,7 @@ library(shinyFiles)
 library(qrcode)
 library(reticulate)
 library(openxlsx)
-use_python("E:\\Python", required = T)
+use_python("C:\\Program Files\\Python36", required = T)
 
 
 #UI Structure
