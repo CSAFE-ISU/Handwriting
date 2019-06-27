@@ -10,7 +10,7 @@ library(raster)
 library(shinythemes)
 library(magick)
 library(shinyFiles)
-library(qrcode)
+#library(qrcode)
 library(reticulate)
 library(openxlsx)
 # use_python("/usr/local/bin/python3.7", required = T)   # this is on Amy's computer
