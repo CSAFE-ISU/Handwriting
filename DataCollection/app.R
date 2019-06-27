@@ -14,8 +14,9 @@ library(qrcode)
 library(reticulate)
 library(openxlsx)
 # use_python("/usr/local/bin/python3.7", required = T)   # this is on Amy's computer
-py_config()
 use_python("C:\\Program Files\\Python36", required = T)
+py_config()
+
 
 
 #UI Structure
