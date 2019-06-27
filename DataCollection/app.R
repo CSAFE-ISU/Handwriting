@@ -281,9 +281,15 @@ server <- function(input, output, session) {
       dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
     }
     proc_fp = file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
-    
+
+    if (!dir.exists(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))){
+      dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
+    }
+    raw_fp = file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
+
     imageName <- gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName))
-    image_write(savedSample, path = paste0(proc_fp, imageName, ".png"), format = "png")
+    image_write(savedSample, path = paste0(proc_fp, imageName, ".png"), format = "png")       # saves cropped image
+    image_write(sample, path = paste0(raw_fp, imageName, ".png"), format = "png")             # saves raw image
     ### DUMP ORIGINAL INTO ANOTHER FOLDER??
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
     file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
@@ -319,7 +325,7 @@ server <- function(input, output, session) {
     file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
   })
   
-  
+  ##############################################################################################################################  
   
   #Function to read in images
   read.image <- function(image.file){
