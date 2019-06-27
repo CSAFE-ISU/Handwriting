@@ -13,122 +13,137 @@ library(shinyFiles)
 library(qrcode)
 library(reticulate)
 library(openxlsx)
-use_python("C:\\Program Files\\Python36", required = T)
+use_python("/usr/local/bin/python3.7", required = T)
+py_config()
+#use_python("C:\\Program Files\\Python36", required = T)
 
 
 #UI Structure
 ui <- fluidPage(theme = shinytheme("yeti"),
-    tabsetPanel(
-    
-      #Begin Survey 1 Tab
-      tabPanel("Survey 1", 
-               
-               titlePanel("CSAFE Handwriting Data Collection (Survey 1)"),
-               
-               fluidRow(
-                 column(3, textInput("surveyInitials", h3("1. Initials"), value = NULL)),
-                 column(3, textInput("surveyLocation", h3("2. Current Location"), value = NULL)),
-                 column(3, dateInput("surveyDate",h3("3 . Date"),value = "2014-01-01")),
-                 column(3, selectInput("surveyTime", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
-               ),
-               
-               fluidRow(
-                 column(3, textInput("surveyThirdGrade", h3("5. 3rd Grade Edu."), value = NULL)),
-                 column(3, selectInput("surveyAge", h3("6. Age"), choices = list("a. 18-24" = "a. 18-24", "b. 25-40" = "b. 25-40","c. 41-60" = "c. 41-60", "d. 61+" = "d. 61+"), selected = 1)),
-                 column(3, selectInput("surveyLanguage", h3("7. Language"), choices = list("a. Yes" = "a. Yes", "b. No" = "b. No"), selected = 1)),
-                 column(3, selectInput("surveyGender", h3("8. Gender"), choices = list("a. Female" = "a. Female", "b. Male" = "b. Male", "c. Other" = "c. Other"), selected = 1)),
-                 column(3, textInput("surveyOtherGender", h3("8(c.) Other Gender"), value = NULL))
-               ),
-               
-               fluidRow(
-                 column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other"), selected = 1)),
-                 column(3, selectInput("surveyEducation", h3("10. Formal Edu."), choices = list("a. High school or less" = "a. High school or less", "b. More than high school" = "b. More than high school"), selected = 1)),
-                 column(3, selectInput("surveyHand", h3("11. Dominant Hand"), choices = list("a. Left" = "a. Left", "b. Right" = "b. Right", "c. Ambidextrous" = "c. Ambidextrous"), selected = 1))
-                 
-               ),
-               
-               fluidRow(column(3, textInput("surveyFile", h3("File Save Name"), value = NULL))),
-               
-               fluidRow(column(3, actionButton("action", label = "SAVE"))),
-               
-               mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300) )),
-               #End Survey 1 Tab
-      
-      #Begin Survey 2 Tab
-      tabPanel("Survey 2", 
-               
-              titlePanel("CSAFE Handwriting Data Collection (Survey 2)"),       
-               
-              fluidRow(
-                  column(3, textInput("survey2Initials", h3("1. Initials"), value = NULL)),
-                  column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL)),
-                  column(3, dateInput("survey2Date",h3("3 . Date"),value = "2014-01-01")),
+                tabsetPanel(
                   
-                  column(3, selectInput("survey2Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
-              ),
-               
-               fluidRow(column(3, textInput("survey2File", h3("File Save Name"), value = NULL))),
-               
-               fluidRow(column(3, actionButton("action2", label = "SAVE"))),
-               
-               mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300))
-              ),
-              #End Survey 2 Tab
-      
-      #Begin Survey 3 Tab
-      tabPanel("Survey 3",
-               
-               titlePanel("CSAFE Handwriting Data Collection (Survey 3)"),       
-               
-               fluidRow(
-                 column(3, textInput("survey3Initials", h3("1. Initials"), value = NULL)),
-                 column(3, textInput("survey3Location", h3("2. Current Location"), value = NULL)),
-                 column(3, dateInput("survey3Date",h3("3 . Date"),value = "2014-01-01")),
-                 column(3, selectInput("survey3Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
-               ),
-               
-               fluidRow(column(3, textInput("survey3File", h3("File Save Name"), value = NULL))),
-               
-               fluidRow(column(3, actionButton("action3", label = "SAVE"))),
-               
-               mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300))
-               
-               ),
-               #End Survey 3
-      
-      #Begin Image Viewer/Cropper tab
-      tabPanel("Image Viewer/Cropper",
-               
-               fluidPage(
-                 titlePanel("View/Crop Image"),
-                 img(src = "csafe_logo.jpg", height = 200, width = 300),
-                 useShinyjs(),
-                 sidebarLayout(
-                   sidebarPanel(
-                     fileInput("file1", "Choose Image",accept = c(".png",".jpg")),
-                     textInput("surveyFilePath", h3("Survey File Path"), value = NULL),
-                     actionButton("surveyFileVal", label = "Survey"),
-                     actionButton("cropSaveSample", label = "Prompt"),
-                     width = 4),
-                   
-                   mainPanel(
-                     plotOutput("plot1", click="plot1_click",
-                                dblclick = "plot1_dblclick",
-                                brush = brushOpts(
-                                  id = "plot1_brush",
-                                  resetOnNew = TRUE
-                                ))
-                            )
+                  #Begin Survey 1 Tab
+                  tabPanel("Survey 1", 
+                           
+                           titlePanel("CSAFE Handwriting Data Collection (Survey 1)"),
+                           
+                           fluidRow(
+                             column(3, textInput("surveyInitials", h3("1. Initials"), value = NULL)),
+                             column(3, selectInput("surveyLanguage", h3("7. Language"), choices = list("a. Yes" = "a. Yes", "b. No" = "b. No"), selected = 1))
+                           ),
+                           
+                           fluidRow(
+                             column(3, textInput("surveyLocation", h3("2. Current Location"), value = NULL)),
+                             column(3, selectInput("surveyGender", h3("8. Gender"), choices = list("a. Female" = "a. Female", "b. Male" = "b. Male", "c. Other" = "c. Other"), selected = 1)),
+                             column(3, textInput("surveyOtherGender", h3("8c. Other"), value = NULL))
+                           ),
+                           
+                           fluidRow(
+                             column(3, dateInput("surveyDate",h3("3 . Date"),value = "2014-01-01")),
+                             column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other"), selected = 1))
+                           ),
+                           
+                           fluidRow(   
+                             column(3, selectInput("surveyTime", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1)),
+                             column(3, selectInput("surveyEducation", h3("10. Formal Edu."), choices = list("a. High school or less" = "a. High school or less", "b. More than high school" = "b. More than high school"), selected = 1))
+                            ),
+                           
+                           fluidRow(
+                             column(3, textInput("surveyThirdGrade", h3("5. 3rd Grade Edu."), value = NULL)),
+                             column(3, selectInput("surveyHand", h3("11. Dominant Hand"), choices = list("a. Left" = "a. Left", "b. Right" = "b. Right", "c. Ambidextrous" = "c. Ambidextrous"), selected = 1))
+                           ),
+                           
+                           fluidRow(
+                             column(3, selectInput("surveyAge", h3("6. Age"), choices = list("a. 18-24" = "a. 18-24", "b. 25-40" = "b. 25-40","c. 41-60" = "c. 41-60", "d. 61+" = "d. 61+"), selected = 1))
+                           ),
+                           
+                           fluidRow(column(3, textInput("surveyQR", h3("File Path"), value = NULL))),
+                           
+                           fluidRow(column(3, actionButton("action", label = "SAVE"))),
+                           
+                           mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300) )),
+                  #End Survey 1 Tab
+                  
+                  #Begin Survey 2 Tab
+                  tabPanel("Survey 2", 
+                           
+                           titlePanel("CSAFE Handwriting Data Collection (Surveys 2)"),       
+                           
+                           fluidRow(
+                             column(3, textInput("survey2Initials", h3("1. Initials"), value = NULL)),
+                             column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL)),
+                             column(3, dateInput("survey2Date",h3("3 . Date"),value = "2014-01-01")),
+                             
+                             column(3, selectInput("survey2Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                           ),
+                           
+                           fluidRow(column(3, textInput("surveyQR2", h3("File Path"), value = NULL))),
+                           
+                           fluidRow(column(3, actionButton("action2", label = "SAVE"))),
+                           
+                           mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300))
+                  ),
+                  #End Survey 2 Tab
+                  
+                  #Begin Survey 3 Tab
+                  tabPanel("Survey 3", 
+                           
+                           titlePanel("CSAFE Handwriting Data Collection (Surveys 3)"),       
+                           
+                           fluidRow(
+                             column(3, textInput("survey3Initials", h3("1. Initials"), value = NULL)),
+                             column(3, textInput("survey3Location", h3("2. Current Location"), value = NULL)),
+                             column(3, dateInput("survey3Date",h3("3 . Date"),value = "2014-01-01")),
+                             
+                             column(3, selectInput("survey3Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                           ),
+                           
+                           fluidRow(column(3, textInput("surveyQR3", h3("File Path"), value = NULL))),
+                           
+                           fluidRow(column(3, actionButton("action3", label = "SAVE"))),
+                           
+                           mainPanel( img(src = "csafe_logo.jpg", height = 200, width = 300))
+                  ),
+                  #End Survey 3 Tab
+                  
+                  #Begin Image Viewer/Cropper tab
+                  tabPanel("Image View/Crop",
+                           
+                           fluidPage(
+                             titlePanel("View/Crop Image"),
+                             img(src = "csafe_logo.jpg", height = 130, width = 200),
+                             useShinyjs(),
+                             sidebarLayout(
+                               sidebarPanel(
+                                 fileInput("file1", "Choose Image", accept = c(".png",".jpg")),
+                                 textInput("popFilePath", h3("File Path"), value = NULL),
+                                 actionButton("surveyAction", label = "Survey"),
+                                 actionButton("sampleAction", label = "Prompt"),
+                                 width = 4),
+                               
+                               mainPanel(
+                                 plotOutput("plot1", click="plot1_click",
+                                            dblclick = "plot1_dblclick",
+                                            brush = brushOpts(
+                                              id = "plot1_brush",
+                                              resetOnNew = TRUE
+                                            ))
+                               )
+                             )
                            )
-                        )
-      )
-    )
-    #End tabset panel
+                  )
+                )
+                #End tabset panel
 )
 
+# testfile = "writing/w0000/s01/pWOZ_r1"
 
 #Writes survey data to file specified by File Name text input
 server <- function(input, output, session) {
+  
+  rootpath = "~/Documents/CSAFE/DataCollection/Scanning/Z/"
+  stagepath = "~/Documents/CSAFE/DataCollection/Scanning/"
+  pypath = "~/Documents/CSAFE/DataCollection/Scanning/scan_processing/DataCollection/"
   
   #Height and Width variables for dyanmically manipulating image size in Image Viewer/Cropper
   h <- 845
@@ -137,177 +152,158 @@ server <- function(input, output, session) {
   #Saving Survey 1 data to a .csv file
   observeEvent(input$action, {
     
-    d <- data.frame( WID = substr(input$surveyFile, 7, 10),
-                    Intitials = input$surveyInitials, 
-                    Location = input$surveyLocation,
-                    Date = input$surveyDate,
-                    Time = input$surveyTime,
-                    ThirdGradeLoc = input$surveyThirdGrade,
-                    Age = input$surveyAge,
-                    Language = input$surveyLanguage,
-                    Gender = input$surveyGender,
-                    Other = input$surveyOtherGender,
-                    Ethnicity = input$surveyEthnicity,
-                    Edu = input$surveyEducation,
-                    Hand = input$surveyHand)
+    d <- data.frame( WID = gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR), #WID
+                     Intitials = input$surveyInitials, 
+                     Location = input$surveyLocation,
+                     Date = input$surveyDate,
+                     Time = input$surveyTime,
+                     ThirdGradeLoc = input$surveyThirdGrade,
+                     Age = input$surveyAge,
+                     Language = input$surveyLanguage,
+                     Gender = input$surveyGender,
+                     Other = input$surveyOtherGender,
+                     Ethnicity = input$surveyEthnicity,
+                     Edu = input$surveyEducation,
+                     Hand = input$surveyHand)
     
-    currDir <- getwd()
-    
-    if (dir.exists(substr(input$surveyFile, 0, 5))){
-      setwd(file.path(getwd(), substr(input$surveyFile, 0, 5)))
-    }else{
-      dir.create(file.path(substr(input$surveyFile, 0, 5)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$surveyFile, 0, 5)))
+    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR))){   #everything before first fwd slash - "surveys"
+      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR), "/")), recursive = TRUE)
     }
-
-    v <- substr(input$surveyFile, 7, 10)
-    o <- as.numeric(v)+1
-    wb <- loadWorkbook("S1.xlsx")
-    writeData(wb, sheet = "Sheet1", startRow = o, d, colNames = F)
-    saveWorkbook(wb,"S1.xlsx",overwrite = T)
-    setwd(file.path(currDir))
+    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR), "/"))
     
-    if (dir.exists(substr(input$surveyFile, 0, nchar(as.character(input$surveyFile)) - 8))){
-      setwd(file.path(getwd(), substr(input$surveyFile, 0, nchar(as.character(input$surveyFile)) - 8)))
-    } else {
-      dir.create(file.path(getwd(), substr(input$surveyFile, 0, nchar(as.character(input$surveyFile)) - 8)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$surveyFile, 0, nchar(as.character(input$surveyFile)) - 8)))
-      
+    WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR) #WID
+    line_entry <- as.numeric(WID)+1
+    wb <- loadWorkbook(paste0(fp,"S1.xlsx"))
+    writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
+    saveWorkbook(wb,paste0(fp,"S1.xlsx"), overwrite = T)
+    
+    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/")))){  #everything before last fwd slash
+      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/")), recursive = TRUE)
     }
-
-    write.csv(d, file = paste("w", substr(input$surveyFile, 7, 10), "_", "s", substr(input$surveyFile, 12, 13), "_", "S1", ".csv",  sep = ""),row.names=FALSE,col.names=FALSE)
+    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/"))
+    
+    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR)), ".csv")) #everything after first fwd slash - turn / to _
     showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    setwd(file.path(currDir))
-    
   })
   
   #Saving Survey 2 data to a .csv file
   observeEvent(input$action2, {
     
     d2 <- data.frame(Initials = input$survey2Initials, 
-                    Current_Location = input$survey2Location,
-                    Date = input$survey2Date,
-                    Time = input$survey2Time)
+                     Current_Location = input$survey2Location,
+                     Date = input$survey2Date,
+                     Time = input$survey2Time)
     
-    currDir <- getwd()
-    
-    
-    if (dir.exists(substr(input$survey2File, 0, 5))){
-      setwd(file.path(getwd(), substr(input$survey2File, 0, 5)))
-    }else{
-      dir.create(file.path(substr(input$survey2File, 0, 5)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$survey2File, 0, 5)))
+    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2))){   #everything before first fwd slash - "surveys"
+      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2), "/")), recursive = TRUE)
     }
+    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2), "/"))
     
-    v <- substr(input$survey2File, 7, 10)
-    o <- as.numeric(v)+1
-    wb <- loadWorkbook("S2.xlsx")
-    writeData(wb, sheet = "Sheet1", startRow = o, d2, colNames = F)
-    saveWorkbook(wb,"S2.xlsx",overwrite = T)
-    setwd(file.path(currDir))
+    WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR2) #WID
+    line_entry <- as.numeric(WID)+1
+    wb <- loadWorkbook(paste0(fp,"S2.xlsx"))
+    writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
+    saveWorkbook(wb,paste0(fp,"S2.xlsx"), overwrite = T)
     
-    if (dir.exists(substr(input$survey2File, 0, nchar(as.character(input$survey2File)) - 8))){
-      setwd(file.path(getwd(), substr(input$survey2File, 0, nchar(as.character(input$survey2File)) - 8)))
-    } else {
-      dir.create(file.path(getwd(), substr(input$survey2File, 0, nchar(as.character(input$survey2File)) - 8)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$survey2File, 0, nchar(as.character(input$survey2File)) - 8)))
-      
+    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/")))){  #everything before last fwd slash
+      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/")), recursive = TRUE)
     }
+    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/"))
     
-    write.csv(d2, file = paste("w", substr(input$survey2File, 7, 10), "_", "s", substr(input$survey2File, 12, 13), "_", "S2", ".csv",  sep = ""))
-    
+    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR2)), ".csv")) #everything after first fwd slash - turn / to _
     showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    
-    setwd(file.path(currDir))
-    
   })
   
   #Saving Survey 3 data to a .csv file
   observeEvent(input$action3, {
-    
     d3 <- data.frame(Initials = input$survey3Initials, 
                      Current_Location = input$survey3Location,
                      Date = input$survey3Date,
                      Time = input$survey3Time)
     
-    currDir <- getwd()
-    
-    
-    if (dir.exists(substr(input$survey3File, 0, 5))){
-      setwd(file.path(getwd(), substr(input$survey3File, 0, 5)))
-    }else{
-      dir.create(file.path(substr(input$survey3File, 0, 5)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$survey3File, 0, 5)))
+    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3))){   #everything before first fwd slash - "surveys"
+      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3), "/")), recursive = TRUE)
     }
+    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3), "/"))
     
-    v <- substr(input$survey3File, 7, 10)
-    o <- as.numeric(v)+1
-    wb <- loadWorkbook("S3.xlsx")
-    writeData(wb, sheet = "Sheet1", startRow = o, d3, colNames = F)
-    saveWorkbook(wb,"S3.xlsx",overwrite = T)
-    setwd(file.path(currDir))
+    WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR3) #WID
+    line_entry <- as.numeric(WID)+1
+    wb <- loadWorkbook(paste0(fp,"S3.xlsx"))
+    writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
+    saveWorkbook(wb,paste0(fp,"S3.xlsx"), overwrite = T)
     
-    if (dir.exists(substr(input$survey3File, 0, nchar(as.character(input$survey3File)) - 8))){
-      setwd(file.path(getwd(), substr(input$survey3File, 0, nchar(as.character(input$survey3File)) - 8)))
-    } else {
-      dir.create(file.path(getwd(), substr(input$survey3File, 0, nchar(as.character(input$survey3File)) - 8)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(input$survey3File, 0, nchar(as.character(input$survey3File)) - 8)))
-      
+    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/")))){  #everything before last fwd slash
+      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/")), recursive = TRUE)
     }
+    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/"))
     
-    write.csv(d3, file = paste("w", substr(input$survey3File, 7, 10), "_", "s", substr(input$survey3File, 12, 13), "_", "S3", ".csv",  sep = ""))
-    
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    
-    setwd(file.path(currDir))
-    
+    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR3)), ".csv")) #everything after first fwd slash - turn / to _
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
   })
   
-  #Crops and saves sample image
-  observeEvent(input$cropSaveSample, {
+  
+  
+  #Crops and saves writing sample
+  observeEvent(input$sampleAction, {
+    vert_frac = .15                               ## fraction of the vertical pixels that marks just below the line.
+    sample = image_read(input$file1$datapath)
+    dims = dim(as.raster(sample))                 ## [1] = rows (vert, y), [2] = cols (hor, x)
+    top_y = vert_frac*dims[1]
+    bottom_y = (1-vert_frac)*dims[1]
     
-    sample <- image_read(input$file1$datapath)
-    savedSample <- image_chop(sample, "0x340")
-    tempSample <-image_chop(sample, "1300x1700+0+290")
+    # this saves the bottom portion of the image. Keeps from 0th col, top_yth row and underneath
+    savedSample <- image_chop(sample, paste0("0x",top_y))     #;plot(savedSample)
+    
+    # this saves the upper right corner. (XbyY is the amount to cut off, X+Y is the offset)
+    tempSample <- image_chop(sample, paste0(dims[2]*.75,"x", bottom_y,"+0+",top_y-40))
     image_write(tempSample, path = "test.png", format = "png")
     
-    source_python('decoder.py')
+    source_python(paste0(pypath, 'decoder.py'))
     fileName <- decode_file("test.png")
     fn <- "test.png"
     if (file.exists(fn)) 
       file.remove(fn)
+    updateTextInput(session, "popFilePath", value = as.character(fileName))
     
-    currDir <- getwd()
-    
-    if (dir.exists(substr(fileName, 0, nchar(as.character(fileName)) - 3))){
-      setwd(file.path(getwd(), substr(fileName, 0, nchar(as.character(fileName)) - 3)))
-    } else {
-      dir.create(file.path(getwd(), substr(fileName, 0, nchar(as.character(fileName)) - 3)), recursive = TRUE)
-      setwd(file.path(getwd(), substr(fileName, 0, nchar(as.character(fileName)) - 3)))
-      
+    if (!dir.exists(gsub('(.*)/\\w+', "\\1", fileName))){
+      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName))), recursive = TRUE)
     }
+    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/"))
     
-    imageName<- paste("w", substr(fileName, 7, 10), "_", "s", substr(fileName, 12, 13), "_", "p", substr(fileName, 23, 23), "_", "r",substr(fileName, 25, 25)  ,  sep = "")
-    image_write(savedSample, path = paste(imageName, ".png"), format = "png")
+    imageName <- gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName))
+    image_write(savedSample, path = paste0(fp, imageName, ".png"), format = "png")
+    ### DUMP ORIGINAL INTO ANOTHER FOLDER??
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    
-    setwd(file.path(currDir))
+    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
   })
   
-  observeEvent(input$surveyFileVal, {
+  observeEvent(input$surveyAction, {
+    vert_frac = .15                               ## fraction of the vertical pixels that marks just below the line.
+    sample = image_read(input$file1$datapath)
+    dims = dim(as.raster(sample))                 ## [1] = rows (vert, y), [2] = cols (hor, x)
+    top_y = vert_frac*dims[1]
+    bottom_y = (1-vert_frac)*dims[1]
     
-    sample <- image_read(input$file1$datapath)
-    tempSample <-image_chop(sample, "500x700+0+93")
-    finalSample <- image_scale(tempSample, "300x300")
-    image_write(finalSample, path = "test.png", format = "png")
+    tempSample = image_chop(sample, paste0(dims[2]*.75,"x", bottom_y,"+0+",top_y-40)) ;plot(tempSample)
+    image_write(tempSample, path = "test.png", format = "png")
     
-    source_python('decoder.py')
+    source_python(paste0(pypath, 'decoder.py'))
     fileName <- decode_file("test.png")
     fn <- "test.png"
     if (file.exists(fn)) 
       file.remove(fn)
-    updateTextInput(session, "surveyFilePath", value = as.character(fileName))
+    updateTextInput(session, "popFilePath", value = as.character(fileName))
+    
+    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/")))){  #everything before last fwd slash
+      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/")), recursive = TRUE)
+    }
+    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/"))
+    
+    image_write(sample, path = paste0(fp, gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName)), ".png"), format = "png")
+    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
   })
+  
+  
   
   #Function to read in images
   read.image <- function(image.file){
@@ -317,7 +313,7 @@ server <- function(input, output, session) {
     }
     im
   }
-
+  
   #Function to select points
   select.points <- function(im, x, y){
     if(is.null(x) | is.null(y)){
@@ -343,14 +339,14 @@ server <- function(input, output, session) {
     }
     mask
   }
-
-
+  
+  
   #Makes all points in image that have a 0 in the mask white
   removePoints <- function(im, mask){
     im[mask==0] <- 1
     im
   }
-
+  
   #Plotting the image
   app.plot <- function(im, clicks.x = NULL, clicks.y = NULL, lineslist = NULL){
     if(is.null(im)){
@@ -373,23 +369,23 @@ server <- function(input, output, session) {
       }
     }
   }
-
+  
   #Set ranges for zooming
   ranges <- reactiveValues(x = NULL, y = NULL)
-
+  
   #Zoom in on brushed area when double clicking for plot 1
   observeEvent(input$plot1_dblclick, {
     brush <- input$plot1_brush
     if (!is.null(brush)) {
       ranges$x <- c(brush$xmin, brush$xmax)
       ranges$y <- c(brush$ymin, brush$ymax)
-
+      
     } else {
       ranges$x <- NULL
       ranges$y <- NULL
     }
   })
-
+  
   v <- reactiveValues(
     originalImage = NULL,
     croppedImage = NULL,
@@ -399,7 +395,7 @@ server <- function(input, output, session) {
     crop.img = FALSE,
     imageName = NULL
   )
-
+  
   #Reads image
   observeEvent(input$file1, {
     v$originalImage <- read.image(input$file1$datapath)
@@ -413,9 +409,9 @@ server <- function(input, output, session) {
       app.plot(v$originalImage,v$imgclick.x, v$imgclick.y)
     }, width = w, height = h)
   })
-
+  
   observeEvent(input$imgName, {v$imageName <- input$imgName})
-
+  
   #Handle clicks on the plot for tracing foreground
   observeEvent(input$selectForeground, {
     v$crop.img <- TRUE
@@ -424,7 +420,7 @@ server <- function(input, output, session) {
     enable("resetCropping")
     enable("cropBackground")
   })
-
+  
   #Pause cropping
   observeEvent(input$pauseCropping, {
     v$crop.img <- FALSE
@@ -433,8 +429,8 @@ server <- function(input, output, session) {
     enable("resetTracePaw")
     enable("cropBackground")
   })
-
-
+  
+  
   #Reset cropping
   observeEvent(input$resetCropping, {
     v$croppedImage <- NULL
@@ -450,8 +446,8 @@ server <- function(input, output, session) {
     ranges$x <- NULL
     ranges$y <- NULL
   })
-
-
+  
+  
   observeEvent(input$cropBackground,{
     if(is.null(v$imgclick.x) | is.null(v$imgclick.y)){
       v$croppedImage <- v$originalImage
@@ -464,7 +460,7 @@ server <- function(input, output, session) {
       v$imgclick.y <- NULL
       enable("pauseCropping")
       enable("selectForeground")
-
+      
       enable("resetTracePaw")
       disable("cropBackground")
     }
@@ -472,9 +468,9 @@ server <- function(input, output, session) {
       app.plot(v$croppedImage)
     })
   })
-
+  
   observeEvent(input$downloadImage, {imager::save.image(v$croppedImage, paste(input$imgName, ".png"))})
-
+  
   #Keep track of click locations
   observeEvent(input$plot1_click, {
     # Keep track of number of clicks for line drawing
@@ -483,11 +479,11 @@ server <- function(input, output, session) {
       v$imgclick.y <- c(v$imgclick.y, round(input$plot1_click$y))
     }
   })
-
-
+  
+  
   ### Original Image
   output$plot1 <- renderPlot({app.plot(v$originalImage, v$imgclick.x, v$imgclick.y)})
-
+  
 }
 
 # Run application 
