@@ -136,7 +136,11 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                 #End tabset panel
 )
 
-# testfile = "writing/w0000/s01/pWOZ_r1"
+
+
+
+##############################################################################################################################
+##############################################################################################################################
 
 #Writes survey data to file specified by File Name text input
 server <- function(input, output, session) {
@@ -149,6 +153,7 @@ server <- function(input, output, session) {
   h <- 845
   w <- 745
   
+  ##############################################################################################################################
   #Saving Survey 1 data to a .csv file
   observeEvent(input$action, {
     
@@ -186,6 +191,7 @@ server <- function(input, output, session) {
     showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
   })
   
+  ##############################################################################################################################
   #Saving Survey 2 data to a .csv file
   observeEvent(input$action2, {
     
@@ -214,6 +220,7 @@ server <- function(input, output, session) {
     showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
   })
   
+  ##############################################################################################################################
   #Saving Survey 3 data to a .csv file
   observeEvent(input$action3, {
     d3 <- data.frame(Initials = input$survey3Initials, 
@@ -242,7 +249,9 @@ server <- function(input, output, session) {
   })
   
   
-  
+  ##############################################################################################################################
+  # SAMPLE ACTION
+  ##############################################################################################################################
   #Crops and saves writing sample
   observeEvent(input$sampleAction, {
     vert_frac = .15                               ## fraction of the vertical pixels that marks just below the line.
@@ -277,6 +286,10 @@ server <- function(input, output, session) {
     file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
   })
   
+  
+  ##############################################################################################################################
+  # SURVEY ACTION
+  ##############################################################################################################################
   observeEvent(input$surveyAction, {
     vert_frac = .15                               ## fraction of the vertical pixels that marks just below the line.
     sample = image_read(input$file1$datapath)
