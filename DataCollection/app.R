@@ -13,9 +13,9 @@ library(shinyFiles)
 library(qrcode)
 library(reticulate)
 library(openxlsx)
-use_python("/usr/local/bin/python3.7", required = T)
+# use_python("/usr/local/bin/python3.7", required = T)   # this is on Amy's computer
 py_config()
-#use_python("C:\\Program Files\\Python36", required = T)
+use_python("C:\\Program Files\\Python36", required = T)
 
 
 #UI Structure
@@ -145,9 +145,11 @@ ui <- fluidPage(theme = shinytheme("yeti"),
 #Writes survey data to file specified by File Name text input
 server <- function(input, output, session) {
   
-  rootpath = "~/Documents/CSAFE/DataCollection/Scanning/Z/"
-  stagepath = "~/Documents/CSAFE/DataCollection/Scanning/"
-  pypath = "~/Documents/CSAFE/DataCollection/Scanning/scan_processing/DataCollection/"
+  procpath = "Z:\\Data_Collection\\DONOTTOUCH-processed_scans\\"
+  rawpath = "Z:\\Data_Collection\\DONOTTOUCH-raw_scans\\"
+  wbpath = "Z:\\Data_Collection\\DONOTTOUCH-spreadsheets\\"
+  stagepath = "Z:\\Data_Collection\\scan_staging\\"
+  pypath = "C:\\Users\\jekruse\\Documents\\Handwriting\\DataCollection\\"
   
   #Height and Width variables for dyanmically manipulating image size in Image Viewer/Cropper
   h <- 845
@@ -274,13 +276,13 @@ server <- function(input, output, session) {
       file.remove(fn)
     updateTextInput(session, "popFilePath", value = as.character(fileName))
     
-    if (!dir.exists(gsub('(.*)/\\w+', "\\1", fileName))){
-      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName))), recursive = TRUE)
+    if (!dir.exists(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))){
+      dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
     }
-    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/"))
+    proc_fp = file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
     
     imageName <- gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName))
-    image_write(savedSample, path = paste0(fp, imageName, ".png"), format = "png")
+    image_write(savedSample, path = paste0(proc_fp, imageName, ".png"), format = "png")
     ### DUMP ORIGINAL INTO ANOTHER FOLDER??
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
     file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
