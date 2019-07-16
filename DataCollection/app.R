@@ -283,7 +283,7 @@ server <- function(input, output, session) {
     proc_fp = file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
 
     if (!dir.exists(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))){
-      dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
+      dir.create(file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
     }
     raw_fp = file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
 
