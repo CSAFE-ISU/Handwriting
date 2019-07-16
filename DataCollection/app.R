@@ -293,7 +293,7 @@ server <- function(input, output, session) {
     ### DUMP ORIGINAL INTO ANOTHER FOLDER?
     showNotification(paste0("rename: ", paste0(input$file1$name)))
     #showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    #file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
+    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
   })
   
   
