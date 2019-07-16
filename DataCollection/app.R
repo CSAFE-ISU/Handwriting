@@ -292,7 +292,7 @@ server <- function(input, output, session) {
     image_write(sample, path = paste0(raw_fp, imageName, ".png"), format = "png")             # saves raw image
     ### DUMP ORIGINAL INTO ANOTHER FOLDER??
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
+    file.rename(paste0(stagepath, input$file1$datapath), paste0(gsub(".png", "", paste0(stagepath, input$file1$datapath)), "_processed.png"))
   })
   
   
