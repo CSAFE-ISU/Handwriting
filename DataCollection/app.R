@@ -275,7 +275,7 @@ server <- function(input, output, session) {
     fn <- "test.png"
     if (file.exists(fn)) 
       file.remove(fn)
-    updateTextInput(session, "popFilePath", value = as.character(fileName))
+    updateTextInput(session, "popFilePath", value = as.character(input$file1$name))#as.character(fileName))
     
     if (!dir.exists(paste0(procpath,  gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))){
       dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
