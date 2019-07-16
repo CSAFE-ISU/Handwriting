@@ -291,8 +291,9 @@ server <- function(input, output, session) {
     image_write(savedSample, path = paste0(proc_fp, "\\", imageName, ".png"), format = "png")       # saves cropped image
     image_write(sample, path = paste0(raw_fp, "\\", imageName, ".png"), format = "png")             # saves raw image
     ### DUMP ORIGINAL INTO ANOTHER FOLDER??
-    showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
-    file.rename(paste0(stagepath, "\\", input$file1$datapath), paste0(gsub(".png", "", paste0(stagepath, "\\", input$file1$datapath)), "_processed.png"))
+    showNotification(paste0("Procpath: ", paste0(proc_fp, "\\", imageName, ".png")))
+    #showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
+    #file.rename(paste0(stagepath, "\\", input$file1$datapath), paste0(gsub(".png", "", paste0(stagepath, "\\", input$file1$datapath)), "_processed.png"))
   })
   
   
