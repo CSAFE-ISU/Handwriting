@@ -40,7 +40,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            ),
                            
                            fluidRow(
-                             column(3, dateInput("surveyDate",h3("3 . Date"),value = "2014-01-01")),
+                             column(3, dateInput("surveyDate",h3("3 . Date"), value = "2019-06-01")),
                              column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other"), selected = 1))
                            ),
                            
@@ -73,7 +73,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            fluidRow(
                              column(3, textInput("survey2Initials", h3("1. Initials"), value = NULL)),
                              column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL)),
-                             column(3, dateInput("survey2Date",h3("3 . Date"),value = "2014-01-01")),
+                             column(3, dateInput("survey2Date",h3("3 . Date"), value = "2019-06-01")),
                              
                              column(3, selectInput("survey2Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
                            ),
@@ -94,7 +94,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            fluidRow(
                              column(3, textInput("survey3Initials", h3("1. Initials"), value = NULL)),
                              column(3, textInput("survey3Location", h3("2. Current Location"), value = NULL)),
-                             column(3, dateInput("survey3Date",h3("3 . Date"),value = "2014-01-01")),
+                             column(3, dateInput("survey3Date",h3("3 . Date"),value = "2019-06-01")),
                              
                              column(3, selectInput("survey3Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
                            ),
@@ -174,24 +174,25 @@ server <- function(input, output, session) {
                      Edu = input$surveyEducation,
                      Hand = input$surveyHand)
     
-    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR))){   #everything before first fwd slash - "surveys"
-      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR), "/")), recursive = TRUE)
-    }
-    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR), "/"))
+    # if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR))){   #everything before first fwd slash - "surveys"
+    #   dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR), "/")), recursive = TRUE)
+    # }
+    
+    fp =  file.path(paste0(wbpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR)))
     
     WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR) #WID
     line_entry <- as.numeric(WID)+1
-    wb <- loadWorkbook(paste0(fp,"S1.xlsx"))
+    wb <- loadWorkbook(paste0(fp, "\\", "S1.xlsx"))
     writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
-    saveWorkbook(wb,paste0(fp,"S1.xlsx"), overwrite = T)
+    saveWorkbook(wb,paste0(fp, "\\", "S1.xlsx"), overwrite = T)
     
-    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/")))){  #everything before last fwd slash
-      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/")), recursive = TRUE)
+    if (!dir.exists(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR)))))){  #everything before last fwd slash
+      dir.create(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR)))), recursive = TRUE)
     }
-    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR), "/"))
+    fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR))))
     
-    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR)), ".csv")) #everything after first fwd slash - turn / to _
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
+    write.csv(d, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR)), ".csv")) #everything after first fwd slash - turn / to _
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
   })
   
   ##############################################################################################################################
@@ -203,24 +204,25 @@ server <- function(input, output, session) {
                      Date = input$survey2Date,
                      Time = input$survey2Time)
     
-    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2))){   #everything before first fwd slash - "surveys"
-      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2), "/")), recursive = TRUE)
-    }
-    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2), "/"))
+    # if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2))){   #everything before first fwd slash - "surveys"
+    #   dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2), "/")), recursive = TRUE)
+    # }
+    
+    fp =  file.path(paste0(wbpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR2)))
     
     WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR2) #WID
     line_entry <- as.numeric(WID)+1
-    wb <- loadWorkbook(paste0(fp,"S2.xlsx"))
-    writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
-    saveWorkbook(wb,paste0(fp,"S2.xlsx"), overwrite = T)
+    wb <- loadWorkbook(paste0(fp, "\\", "S2.xlsx"))
+    writeData(wb = wb, sheet = "Sheet1", x = d2, startRow = line_entry, colNames = F)
+    saveWorkbook(wb,paste0(fp, "\\", "S2.xlsx"), overwrite = T)
     
-    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/")))){  #everything before last fwd slash
-      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/")), recursive = TRUE)
+    if (!dir.exists(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR2)))))){  #everything before last fwd slash
+      dir.create(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR2)))), recursive = TRUE)
     }
-    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR2), "/"))
+    fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR2))))
     
-    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR2)), ".csv")) #everything after first fwd slash - turn / to _
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"))
+    write.csv(d2, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR2)), ".csv")) #everything after first fwd slash - turn / to _
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
   })
   
   ##############################################################################################################################
@@ -231,23 +233,24 @@ server <- function(input, output, session) {
                      Date = input$survey3Date,
                      Time = input$survey3Time)
     
-    if (!dir.exists(gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3))){   #everything before first fwd slash - "surveys"
-      dir.create(file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3), "/")), recursive = TRUE)
-    }
-    fp = file.path(paste0(rootpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3), "/"))
+    # if (!dir.exists(paste0(wbpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3)))){   #everything before first fwd slash - "surveys"
+    #   dir.create(file.path(paste0(wbpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3))), recursive = TRUE)
+    # }
+    
+    fp = file.path(paste0(wbpath, gsub("(.+?)(\\/.*)", "\\1", input$surveyQR3)))
     
     WID <- gsub("(^.+/w)(\\d+)(/.+$)", "\\2", input$surveyQR3) #WID
     line_entry <- as.numeric(WID)+1
-    wb <- loadWorkbook(paste0(fp,"S3.xlsx"))
-    writeData(wb = wb, sheet = "Sheet1", x = d, startRow = line_entry, colNames = F)
-    saveWorkbook(wb,paste0(fp,"S3.xlsx"), overwrite = T)
+    wb <- loadWorkbook(paste0(fp, "\\", "S3.xlsx"))
+    writeData(wb = wb, sheet = "Sheet1", x = d3, startRow = line_entry, colNames = F)
+    saveWorkbook(wb,paste0(fp, "\\","S3.xlsx"), overwrite = T)
     
-    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/")))){  #everything before last fwd slash
-      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/")), recursive = TRUE)
+    if (!dir.exists(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR3)))))){  #everything before last fwd slash
+      dir.create(file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR3)))), recursive = TRUE)
     }
-    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", input$surveyQR3), "/"))
+    fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR3))))
     
-    write.csv(d, file = paste0(fp,gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR3)), ".csv")) #everything after first fwd slash - turn / to _
+    write.csv(d3, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR3)), ".csv")) #everything after first fwd slash - turn / to _
     showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
   })
   
@@ -275,7 +278,7 @@ server <- function(input, output, session) {
     fn <- "test.png"
     if (file.exists(fn)) 
       file.remove(fn)
-    updateTextInput(session, "popFilePath", value = as.character(input$file1$name))#as.character(fileName))
+    updateTextInput(session, "popFilePath", value = as.character(fileName))
     
     if (!dir.exists(paste0(procpath,  gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))){
       dir.create(file.path(paste0(procpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
@@ -292,7 +295,7 @@ server <- function(input, output, session) {
     image_write(sample, path = paste0(raw_fp, "\\", imageName, ".png"), format = "png")             # saves raw image
     ### DUMP ORIGINAL INTO ANOTHER FOLDER?
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
-    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, "processed_", input$file1$name)), ".png"))
+    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "processed_", input$file1$name, ".png"))
   })
   
   
@@ -316,13 +319,15 @@ server <- function(input, output, session) {
       file.remove(fn)
     updateTextInput(session, "popFilePath", value = as.character(fileName))
     
-    if (!dir.exists(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/")))){  #everything before last fwd slash
-      dir.create(file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/")), recursive = TRUE)
+    if (!dir.exists(file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))))){  #everything before last fwd slash
+      dir.create(file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName)))), recursive = TRUE)
     }
-    fp = file.path(paste0(rootpath, gsub('(.*)/\\w+', "\\1", fileName), "/"))
+    fp = file.path(paste0(rawpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", fileName))))
     
-    image_write(sample, path = paste0(fp, gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName)), ".png"), format = "png")
-    file.rename(paste0(stagepath, input$file1$name), paste0(gsub(".png", "", paste0(stagepath, input$file1$name)), "_processed.png"))
+    image_write(sample, path = paste0(fp, "\\",  gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName)), ".png"), format = "png")
+    
+    showNotification("Survey Image Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
+    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "processed_", input$file1$name, ".png"))
   })
   
   ##############################################################################################################################  
