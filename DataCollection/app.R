@@ -208,7 +208,7 @@ server <- function(input, output, session) {
     fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR))))
     
     write.csv(d, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR)), ".csv")) #everything after first fwd slash - turn / to _
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
   })
   
   ##############################################################################################################################
@@ -239,7 +239,7 @@ server <- function(input, output, session) {
     fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR2))))
     
     write.csv(d2, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR2)), ".csv")) #everything after first fwd slash - turn / to _
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
   })
   
   ##############################################################################################################################
@@ -269,7 +269,7 @@ server <- function(input, output, session) {
     fp = file.path(paste0(wbpath, gsub(pattern = "/", replacement = "\\\\",  x = gsub('(.*)/\\w+', "\\1", input$surveyQR3))))
     
     write.csv(d3, file = paste0(fp, "\\", gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", input$surveyQR3)), ".csv")) #everything after first fwd slash - turn / to _
-    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", paste0("Reload page", input$file1$name)))
+    showNotification("Data Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
   })
   
   
