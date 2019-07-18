@@ -40,12 +40,12 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            ),
                            
                            fluidRow(
-                             column(3, dateInput("surveyDate",h3("3 . Date"), value = "2019-06-01")),
+                             column(3, selectInput("surveyTime", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1)),
                              column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other"), selected = 1))
                            ),
                            
                            fluidRow(   
-                             column(3, selectInput("surveyTime", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1)),
+                             column(3, dateInput("surveyDate",h3("3 . Date"), value = "2019-06-01")),
                              column(3, selectInput("surveyEducation", h3("10. Formal Edu."), choices = list("a. High school or less" = "a. High school or less", "b. More than high school" = "b. More than high school"), selected = 1))
                             ),
                            
@@ -71,11 +71,18 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            titlePanel("CSAFE Handwriting Data Collection (Surveys 2)"),       
                            
                            fluidRow(
-                             column(3, textInput("survey2Initials", h3("1. Initials"), value = NULL)),
-                             column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL)),
-                             column(3, dateInput("survey2Date",h3("3 . Date"), value = "2019-06-01")),
-                             
+                             column(3, textInput("survey2Initials", h3("1. Initials"), value = NULL))
+                           ),
+                           
+                           fluidRow(
+                             column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL))
+                           ),
+                           
                              column(3, selectInput("survey2Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                           ),
+                  
+                           fluidRow(
+                             column(3, dateInput("survey2Date",h3("3 . Date"), value = "2019-07-01"))
                            ),
                            
                            fluidRow(column(3, textInput("surveyQR2", h3("File Path"), value = NULL))),
@@ -94,9 +101,8 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            fluidRow(
                              column(3, textInput("survey3Initials", h3("1. Initials"), value = NULL)),
                              column(3, textInput("survey3Location", h3("2. Current Location"), value = NULL)),
-                             column(3, dateInput("survey3Date",h3("3 . Date"),value = "2019-06-01")),
-                             
-                             column(3, selectInput("survey3Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                             column(3, selectInput("survey3Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1)),
+                             column(3, dateInput("survey3Date",h3("3 . Date"),value = "2019-07-01"))
                            ),
                            
                            fluidRow(column(3, textInput("surveyQR3", h3("File Path"), value = NULL))),
