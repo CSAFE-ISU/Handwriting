@@ -313,7 +313,7 @@ server <- function(input, output, session) {
     image_write(sample, path = paste0(raw_fp, "\\", imageName, ".png"), format = "png")             # saves raw image
     ### DUMP ORIGINAL INTO ANOTHER FOLDER?
     showNotification("Sample Cropped and Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
-    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "processed_", input$file1$name, ".png"))
+    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "processed_", input$file1$name))
   })
   
   
@@ -345,7 +345,7 @@ server <- function(input, output, session) {
     image_write(sample, path = paste0(fp, "\\",  gsub("/", "_", gsub("(.+?\\/)(.*)", "\\2", fileName)), ".png"), format = "png")
     
     showNotification("Survey Image Saved!", action = a(href = "javascript:location.reload();", "Reload page"), duration = NULL)
-    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "zz_processed_", input$file1$name, ".png"))
+    file.rename(paste0(stagepath, input$file1$name), paste0(stagepath, "processed_", input$file1$name))
   })
   
   ##############################################################################################################################  
