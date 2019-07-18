@@ -78,6 +78,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                              column(3, textInput("survey2Location", h3("2. Current Location"), value = NULL))
                            ),
                            
+                           fluidRow(
                              column(3, selectInput("survey2Time", h3("4. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
                            ),
                   
