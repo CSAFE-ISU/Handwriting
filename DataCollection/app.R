@@ -30,32 +30,32 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            
                            fluidRow(
                              column(3, textInput("surveyInitials", h3("1. Initials"), value = NULL)),
-                             column(3, selectInput("surveyLanguage", h3("7. Language"), choices = list("a. Yes" = "a. Yes", "b. No" = "b. No"), selected = 1))
+                             column(3, selectInput("surveyLanguage", h3("7. Language"), choices = list("a. Yes" = "a. Yes", "b. No" = "b. No", "NA" = "NA"), selected = 1))
                            ),
                            
                            fluidRow(
                              column(3, textInput("surveyLocation", h3("2. Current Location"), value = NULL)),
-                             column(3, selectInput("surveyGender", h3("8. Gender"), choices = list("a. Female" = "a. Female", "b. Male" = "b. Male", "c. Other" = "c. Other"), selected = 1)),
+                             column(3, selectInput("surveyGender", h3("8. Gender"), choices = list("a. Female" = "a. Female", "b. Male" = "b. Male", "c. Other" = "c. Other", "NA" = "NA"), selected = 1)),
                              column(3, textInput("surveyOtherGender", h3("8c. Other"), value = NULL))
                            ),
                            
                            fluidRow(
-                             column(3, selectInput("surveyTime", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1)),
-                             column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other"), selected = 1))
+                             column(3, selectInput("surveyTime", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening", "NA" = "NA"), selected = 1)),
+                             column(3, selectInput("surveyEthnicity", h3("9. Ethnicity "), choices = list("a. African American" = "a. African American", "b. Asian" = "b. Asian","c. Caucasian" = "c. Caucasian", "d. Hispanic" = "d. Hispanic", "e. Native American" = "e. Native American" ,"f. South Pacific" = "f. South Pacific", "g. Other" = "g. Other", "NA" = "NA"), selected = 1))
                            ),
                            
                            fluidRow(   
                              column(3, dateInput("surveyDate",h3("4. Date"), value = "2019-06-01")),
-                             column(3, selectInput("surveyEducation", h3("10. Formal Edu."), choices = list("a. High school or less" = "a. High school or less", "b. More than high school" = "b. More than high school"), selected = 1))
+                             column(3, selectInput("surveyEducation", h3("10. Formal Edu."), choices = list("a. High school or less" = "a. High school or less", "b. More than high school" = "b. More than high school", "NA" = "NA"), selected = 1))
                             ),
                            
                            fluidRow(
                              column(3, textInput("surveyThirdGrade", h3("5. 3rd Grade Edu."), value = NULL)),
-                             column(3, selectInput("surveyHand", h3("11. Dominant Hand"), choices = list("a. Left" = "a. Left", "b. Right" = "b. Right", "c. Ambidextrous" = "c. Ambidextrous"), selected = 1))
+                             column(3, selectInput("surveyHand", h3("11. Dominant Hand"), choices = list("a. Left" = "a. Left", "b. Right" = "b. Right", "c. Ambidextrous" = "c. Ambidextrous", "NA" = "NA"), selected = 1))
                            ),
                            
                            fluidRow(
-                             column(3, selectInput("surveyAge", h3("6. Age"), choices = list("a. 18-24" = "a. 18-24", "b. 25-40" = "b. 25-40","c. 41-60" = "c. 41-60", "d. 61+" = "d. 61+"), selected = 1))
+                             column(3, selectInput("surveyAge", h3("6. Age"), choices = list("a. 18-24" = "a. 18-24", "b. 25-40" = "b. 25-40","c. 41-60" = "c. 41-60", "d. 61+" = "d. 61+", "NA" = "NA"), selected = 1))
                            ),
                            
                            fluidRow(column(3, textInput("surveyQR", h3("File Path"), value = NULL))),
@@ -79,7 +79,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            ),
                            
                            fluidRow(
-                             column(3, selectInput("survey2Time", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                             column(3, selectInput("survey2Time", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening", "NA" = "NA"), selected = 1))
                            ),
                   
                            fluidRow(
@@ -108,7 +108,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                            ),
                            
                            fluidRow(
-                             column(3, selectInput("survey3Time", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening"), selected = 1))
+                             column(3, selectInput("survey3Time", h3("3. Time"), choices = list("a. Early Morning" = "a. Early Morning", "b. Late Morning" = "b. Late Morning","c. Early Afternoon" = "c. Early Afternoon", "d. Late Afternoon" = "d. Late Afternoon", "e. Early Evening" = "e. Early Evening" ,"f. Late Evening" = "f. Late Evening", "NA" = "NA"), selected = 1))
                            ),
                            
                            fluidRow(
